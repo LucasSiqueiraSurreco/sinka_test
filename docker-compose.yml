@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  sinka-test:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      #target: development
+    volumes:
+      - ./src:/app/src
+      - ./node_modules:/app/node_modules
+    container_name: sinka-test
+    expose:
+      - '8080'
+    ports:
+      - '8080:8080'
+#    networks:
+#      - cxaas-ecosystem-network
+#networks:
+#  cxaas-ecosystem-network:
+#    external: true
+#    name: cxaas-ecosystem-network
