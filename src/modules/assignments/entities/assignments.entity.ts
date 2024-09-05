@@ -3,11 +3,15 @@ import { ClientsEntity } from '@modules/clients/entities/clients.entity';
 import { OperatorsEntity } from '@modules/operators/entities/operators.entity';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
-@Index('operator_id', ['operatorId', 'clientId'], { unique: true })
-@Index('client_id', ['clientId'], {})
+@Index('assignments_id_uindex', ['id'], { unique: true })
+@Index('assignments_operator_client_uindex', ['operatorId', 'clientId'], {
+  unique: true,
+})
+@Index('assignments_operator_id_idx', ['operatorId'], {})
+@Index('assignments_client_id_idx', ['clientId'], {})
 @Entity('assignments', { schema: 'railway' })
 export class AssignmentsEntity extends BaseEntity {
-  @Column('varchar', {
+  @Column('char', {
     primary: true,
     name: 'id',
     length: 36,
@@ -16,18 +20,11 @@ export class AssignmentsEntity extends BaseEntity {
   })
   id: string;
 
-  @Column('int', { name: 'operator_id', nullable: true })
-  operatorId: number | null;
+  @Column('varchar', { name: 'operator_id', length: 36 })
+  operatorId: string;
 
-  @Column('int', { name: 'client_id', nullable: true })
-  clientId: number | null;
-
-  @ManyToOne(() => OperatorsEntity, (operators) => operators.assignments, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
-  })
-  @JoinColumn([{ name: 'operator_id', referencedColumnName: 'id' }])
-  operator: OperatorsEntity;
+  @Column('varchar', { name: 'client_id', length: 36 })
+  clientId: string;
 
   @ManyToOne(() => ClientsEntity, (clients) => clients.assignments, {
     onDelete: 'NO ACTION',
@@ -35,4 +32,11 @@ export class AssignmentsEntity extends BaseEntity {
   })
   @JoinColumn([{ name: 'client_id', referencedColumnName: 'id' }])
   client: ClientsEntity;
+
+  @ManyToOne(() => OperatorsEntity, (operators) => operators.assignments, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
+  @JoinColumn([{ name: 'operator_id', referencedColumnName: 'id' }])
+  operator: OperatorsEntity;
 }
