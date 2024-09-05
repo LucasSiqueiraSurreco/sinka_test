@@ -5,14 +5,14 @@ import { ClientsDto } from '../dtos/clients.dto';
 
 @Injectable()
 export class ClientsService {
-  constructor(
-    @InjectRepository(ClientsRepository)
-    private readonly repository: ClientsRepository,
-  ) {}
+    constructor(
+        @InjectRepository(ClientsRepository)
+        private readonly repository: ClientsRepository,
+    ) {}
 
-  async clientRegister(body: ClientsDto) {
-    return this.repository.manager.transaction(async (entityManager) => {
-      return await this.repository.clientRegister(body, entityManager);
-    });
-  }
+    async clientRegister(body: ClientsDto) {
+        return this.repository.manager.transaction(async (entityManager) => {
+            return await this.repository.clientRegister(body, entityManager);
+        });
+    }
 }
