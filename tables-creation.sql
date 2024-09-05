@@ -18,6 +18,7 @@ CREATE TABLE
         `name` varchar(255) NOT NULL,
         `birth` date DEFAULT NULL,
         `email` varchar(255) UNIQUE DEFAULT NULL,
+        `value` DECIMAL(10, 2) DEFAULT 0.00,
         `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
         `deleted_at` timestamp NULL DEFAULT NULL,

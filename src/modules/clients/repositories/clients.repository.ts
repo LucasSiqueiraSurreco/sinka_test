@@ -10,22 +10,15 @@ export class ClientsRepository extends Repository<ClientsEntity> {
         super(ClientsEntity, dataSource.createEntityManager());
     }
 
-    async clientRegister(
-        body: ClientsDto,
-        entityManager: EntityManager,
-    ): Promise<ClientsEntity> {
+    async clientRegister(body: ClientsDto, entityManager: EntityManager): Promise<ClientsEntity> {
         try {
-            const birthDate = body.birth
-                ? format(
-                      parse(body.birth, 'dd-MM-yyyy', new Date()),
-                      'yyyy-MM-dd',
-                  )
-                : null;
+            const birthDate = body.birth ? format(parse(body.birth, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd') : null;
 
             const create = this.create({
                 name: body.name,
                 email: body.email,
                 birth: birthDate,
+                value: body.value,
                 createdAt: new Date(),
                 createdBy: 'system',
             });

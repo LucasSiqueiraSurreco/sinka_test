@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientsRepository } from '@modules/clients/repositories/clients.repository';
 import { ClientsDto } from '../dtos/clients.dto';
+import * as fs from 'fs';
+import * as csv from 'csv-parser';
 
 @Injectable()
 export class ClientsService {
@@ -9,6 +11,29 @@ export class ClientsService {
         @InjectRepository(ClientsRepository)
         private readonly repository: ClientsRepository,
     ) {}
+
+    async registerFromCsv(filePath: string) {
+        const results: ClientsDto[] = [];
+
+        return new Promise((resolve, reject) => {
+            fs.createReadStream(filePath)
+                .pipe(csv())
+                .on('data', (data) => results.push(data))
+                .on('end', async () => {
+                    try {
+                        await this.repository.manager.transaction(async (entityManager) => {
+                            for (const clientData of results) {
+                                await this.repository.clientRegister(clientData, entityManager);
+                            }
+                        });
+                        resolve('Dados cadastrados com sucesso!');
+                    } catch (error) {
+                        reject(error);
+                    }
+                })
+                .on('error', (error) => reject(error));
+        });
+    }
 
     async clientRegister(body: ClientsDto) {
         return this.repository.manager.transaction(async (entityManager) => {

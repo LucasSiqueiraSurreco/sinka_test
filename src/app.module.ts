@@ -8,22 +8,22 @@ import { AppController } from './app.controller';
 import { AllExceptionsFilter } from 'filters/all-exceptions.filter';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-    }),
-    MysqlProviderModule,
-    ModulesModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
-    },
-    ModulesModule,
-  ],
-  exports: [ModulesModule],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [configuration],
+        }),
+        MysqlProviderModule,
+        ModulesModule,
+    ],
+    controllers: [AppController],
+    providers: [
+        {
+            provide: APP_FILTER,
+            useClass: AllExceptionsFilter,
+        },
+        ModulesModule,
+    ],
+    exports: [ModulesModule],
 })
 export class AppModule {}
