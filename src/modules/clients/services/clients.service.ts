@@ -12,6 +12,12 @@ export class ClientsService {
         private readonly repository: ClientsRepository,
     ) {}
 
+    async clientRegister(body: ClientsDto) {
+        return this.repository.manager.transaction(async (entityManager) => {
+            return await this.repository.clientRegister(body, entityManager);
+        });
+    }
+
     async registerFromCsv(filePath: string) {
         const results: ClientsDto[] = [];
 
@@ -32,12 +38,6 @@ export class ClientsService {
                     }
                 })
                 .on('error', (error) => reject(error));
-        });
-    }
-
-    async clientRegister(body: ClientsDto) {
-        return this.repository.manager.transaction(async (entityManager) => {
-            return await this.repository.clientRegister(body, entityManager);
         });
     }
 }

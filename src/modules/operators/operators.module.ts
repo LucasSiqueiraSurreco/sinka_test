@@ -6,9 +6,9 @@ import { OperatorsEntity } from './entities/operators.entity';
 import { OperatorsController } from './controllers/operators.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OperatorsEntity])],
-  controllers: [OperatorsController],
-  providers: [OperatorsService, OperatorsRepository],
-  exports: [OperatorsRepository],
+    imports: [TypeOrmModule.forFeature([OperatorsEntity])],
+    controllers: [OperatorsController],
+    providers: [OperatorsService, OperatorsRepository],
+    exports: [OperatorsRepository],
 })
 export class OperatorsModule {}

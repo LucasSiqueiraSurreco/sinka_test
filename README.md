@@ -28,6 +28,7 @@ CREATE TABLE `clients` (
     `birth` date DEFAULT NULL,
     `email` varchar(255) UNIQUE DEFAULT NULL,
     `value` DECIMAL(10, 2) DEFAULT 0.00,
+    `is_assigned` ENUM('PENDING', 'IN_PROCESSING', 'FINISH', 'ERROR') DEFAULT 'PENDING',
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` timestamp NULL DEFAULT NULL,
@@ -46,6 +47,9 @@ CREATE TABLE `assignments` (
     `id` varchar(36) NOT NULL DEFAULT (uuid ()),
     `operator_id` varchar(36) NOT NULL,
     `client_id` varchar(36) NOT NULL,
+    `operator_name` VARCHAR(150) DEFAULT NULL,
+    `client_name` VARCHAR(150) DEFAULT NULL,
+    `client_email` VARCHAR(255) DEFAULT NULL;
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` timestamp NULL DEFAULT NULL,

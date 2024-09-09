@@ -9,10 +9,7 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
         super(OperatorsEntity, dataSource.createEntityManager());
     }
 
-    async operatorRegister(
-        body: OperatorsDto,
-        entityManager: EntityManager,
-    ): Promise<OperatorsEntity> {
+    async operatorRegister(body: OperatorsDto, entityManager: EntityManager): Promise<OperatorsEntity> {
         try {
             const create = this.create({
                 name: body.name,
@@ -38,54 +35,35 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
         }
     }
 
-    //   async updateOperator(
-    //     body: OperatorsDto,
-    //     updatedBy: string,
-    //     entityManager: EntityManager,
-    //   ): Promise<void | HttpException> {
-    //     try {
-    //       return entityManager
-    //         .createQueryBuilder()
-    //         .update(OperatorsEntity)
-    //         .set({
-    //           updatedBy: updatedBy,
-    //           name: body.name,
-    //         })
-    //         .where('id = :id', { id: body.id })
-    //         .execute()
-    //         .then(async (data) => {
-    //           if (data.affected > 0) {
-    //             return;
-    //           }
+    async operatorsMassRegister(bodies: OperatorsDto[], entityManager: EntityManager): Promise<OperatorsEntity[]> {
+        try {
+            const operators = bodies.map((body) =>
+                this.create({
+                    name: body.name,
+                    createdAt: new Date(),
+                    createdBy: 'system',
+                }),
+            );
 
-    //           throw new HttpException(
-    //             {
-    //               message: `Operador ${body.name} não encontrado`,
-    //               status: false,
-    //               status_code: 4000,
-    //             },
-    //             HttpStatus.BAD_REQUEST,
-    //           );
-    //         });
-    //     } catch (error) {
-    //       if (error.code === 'ER_DUP_ENTRY') {
-    //         error.message = `Operador já está registrado.`;
-    //         error.status_code = 4009;
-    //         error.status = 409;
-    //       }
+            return await entityManager.save(OperatorsEntity, operators);
+        } catch (error) {
+            if (error.code === 'ER_DUP_ENTRY') {
+                error.message = `Um ou mais operadores já registrados.`;
+                error.status_code = 4009;
+                error.status = 409;
+            }
 
-    //       throw new HttpException(
-    //         {
-    //           message: error.message,
-    //           status: false,
-    //           status_code: error.status_code || 4000,
-    //         },
-    //         error.status || 500,
-    //       );
-    //     }
-    //   }
+            throw new HttpException(
+                {
+                    message: error.message,
+                    status: false,
+                    status_code: error.status_code || 4000,
+                },
+                error.status || 500,
+            );
+        }
+    }
 
-    // Find all Operators
     async findAllOperators(): Promise<OperatorsEntity[]> {
         return await this.find();
     }

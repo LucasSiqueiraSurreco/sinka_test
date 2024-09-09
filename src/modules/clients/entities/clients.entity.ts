@@ -32,6 +32,14 @@ export class ClientsEntity extends BaseEntity {
     @Column('decimal', { name: 'value', precision: 10, scale: 2, default: 0.0 })
     value: number;
 
+    @Column({
+        type: 'enum',
+        name: 'is_assigned',
+        enum: ['PENDING', 'IN_PROCESSING', 'FINISH', 'ERROR'],
+        default: 'PENDING',
+    })
+    isAssigned: string;
+
     @OneToMany(() => AssignmentsEntity, (assignments) => assignments.client)
     assignments: AssignmentsEntity[];
 }

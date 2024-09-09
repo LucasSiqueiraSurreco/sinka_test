@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 
@@ -22,6 +22,18 @@ export class OperatorsDataDto {
     data: OperatorsDto;
 
     constructor(partial: Partial<OperatorsDataDto>) {
+        Object.assign(this, partial);
+    }
+}
+
+export class MassOperatorsDataDto {
+    @ApiProperty({ type: [OperatorsDto] })
+    @IsNotEmpty()
+    @IsArray()
+    @Type(() => OperatorsDto)
+    data: OperatorsDto[];
+
+    constructor(partial: Partial<MassOperatorsDataDto>) {
         Object.assign(this, partial);
     }
 }

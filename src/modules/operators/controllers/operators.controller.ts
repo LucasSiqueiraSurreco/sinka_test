@@ -1,24 +1,8 @@
-import {
-    ClassSerializerInterceptor,
-    UseInterceptors,
-    Controller,
-    Headers,
-    Body,
-    Post,
-} from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiTags,
-    ApiResponse,
-    ApiOperation,
-    ApiOkResponse,
-} from '@nestjs/swagger';
+import { ClassSerializerInterceptor, UseInterceptors, Controller, Body, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { OperatorsService } from '../services/operators.service';
 import { HeadersBackofficeInterceptor } from '@common/interceptor/headers-interceptors';
-import { User } from '@common/decorators/user.decorator';
-import { UserDto } from '@common/dtos/user.dto';
-import { HeadersDto } from '@common/dtos/headers.dto';
-import { OperatorsDataDto } from '../dtos/operators.dto';
+import { OperatorsDataDto, OperatorsDto } from '../dtos/operators.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(HeadersBackofficeInterceptor)
@@ -37,11 +21,16 @@ export class OperatorsController {
         description: 'Operator created successfully',
     })
     @Post()
-    async operatorRegister(
-        // @User() user: UserDto,
-        // @Headers() headers: HeadersDto,
-        @Body() body: OperatorsDataDto,
-    ): Promise<void> {
+    async operatorRegister(@Body() body: OperatorsDataDto): Promise<void> {
         await this.service.operatorRegister(body.data);
+    }
+
+    @Post('mass-register')
+    @ApiOperation({ operationId: 'registerMassOperators' })
+    @ApiOkResponse({
+        description: 'Multiple operators registered successfully',
+    })
+    async operatorsMassRegister(@Body() body: { data: OperatorsDto[] }) {
+        return this.service.operatorsMassRegister(body.data);
     }
 }
