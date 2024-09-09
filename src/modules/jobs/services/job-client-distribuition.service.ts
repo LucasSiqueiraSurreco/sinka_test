@@ -3,11 +3,11 @@ import { AssignmentsDto } from '@modules/assignments/dtos/assignments.dto';
 import { AssignmentsRepository } from '@modules/assignments/repositories/assignments.repository';
 import { ClientsRepository } from '@modules/clients/repositories/clients.repository';
 import { OperatorsRepository } from '@modules/operators/repositories/operators.repository';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
-export class JobClientDistribuitionService implements OnModuleInit {
+export class JobClientDistribuitionService {
     private readonly logger = new Logger(JobClientDistribuitionService.name);
 
     constructor(
@@ -15,11 +15,8 @@ export class JobClientDistribuitionService implements OnModuleInit {
         private readonly operatorsRepository: OperatorsRepository,
         private readonly assignmentsRepository: AssignmentsRepository,
     ) {}
-    onModuleInit() {
-        throw new Error('Method not implemented.');
-    }
 
-    @Cron(CronExpression.EVERY_5_SECONDS)
+    @Cron(CronExpression.EVERY_30_SECONDS)
     async handleJobProcessing() {
         this.logger.log('Starting job processing...');
 
