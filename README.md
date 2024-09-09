@@ -2,7 +2,7 @@
 
 ## Database structure
 
-### Tabela: `operators`
+### Table: `operators`
 
 ```sql
 CREATE TABLE `operators` (
