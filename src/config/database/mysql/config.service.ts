@@ -10,50 +10,26 @@ export class TypeOrmConfigService {
     }
 
     get host(): string {
-        return this.configService.get<string>('MYSQL_HOST');
+        return this.configService.get<string>('typeorm.host');
     }
 
     get port(): number {
-        return parseInt(this.configService.get<string>('MYSQL_PORT'));
+        return parseInt(this.configService.get<string>('typeorm.port'));
     }
 
     get username(): string {
-        return this.configService.get<string>('MYSQL_USER');
+        return this.configService.get<string>('typeorm.username');
     }
 
     get password(): string {
-        return this.configService.get<string>('MYSQL_PASSWORD');
+        return this.configService.get<string>('typeorm.password');
     }
 
     get database(): string {
-        return this.configService.get<string>('MYSQL_DATABASE');
+        return this.configService.get<string>('typeorm.database');
     }
 
     get isLogging(): boolean {
-        return this.configService.get<string>('MYSQL_LOG') === 'true';
+        return Boolean(this.configService.get<string>('typeorm.isLogging'));
     }
-
-    //   get host(): string {
-    //     return this.configService.get<string>('typeorm.host');
-    //   }
-
-    //   get port(): number {
-    //     return parseInt(this.configService.get<string>('typeorm.port'));
-    //   }
-
-    //   get username(): string {
-    //     return this.configService.get<string>('typeorm.username');
-    //   }
-
-    //   get password(): string {
-    //     return this.configService.get<string>('typeorm.password');
-    //   }
-
-    //   get database(): string {
-    //     return this.configService.get<string>('typeorm.database');
-    //   }
-
-    //   get isLogging(): boolean {
-    //     return Boolean(this.configService.get<string>('typeorm.isLogging'));
-    //   }
 }
