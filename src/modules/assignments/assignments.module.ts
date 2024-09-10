@@ -5,10 +5,11 @@ import { AssignmentsRepository } from './repositories/assignments.repository';
 import { AssignmentsService } from './services/assignments.service';
 import { OperatorsModule } from '@modules/operators/operators.module';
 import { ClientsModule } from '@modules/clients/clients.module';
+import { AssignmentsController } from './controllers/assignments.controller';
 
 @Module({
     imports: [TypeOrmModule.forFeature([AssignmentsEntity]), ClientsModule, OperatorsModule],
-    controllers: [],
+    controllers: [AssignmentsController],
     providers: [AssignmentsService, AssignmentsRepository],
     exports: [AssignmentsRepository],
 })

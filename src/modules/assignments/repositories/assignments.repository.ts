@@ -62,4 +62,19 @@ export class AssignmentsRepository extends Repository<AssignmentsEntity> {
             );
         }
     }
+
+    async getAllAssignments(): Promise<AssignmentsEntity[]> {
+        try {
+            return await this.find();
+        } catch (error) {
+            throw new HttpException(
+                {
+                    message: 'Error when searching for assignments.',
+                    status: false,
+                    status_code: 5000,
+                },
+                500,
+            );
+        }
+    }
 }
