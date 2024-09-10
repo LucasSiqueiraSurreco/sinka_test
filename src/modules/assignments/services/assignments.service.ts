@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AssignmentsDto } from '../dtos/assignments.dto';
 import { AssignmentsRepository } from '../repositories/assignments.repository';
 import { AssignmentsItem, AssignmentsModel } from '../models/assignments.model';
+import * as fs from 'fs';
+import { Parser } from 'json2csv';
 
 @Injectable()
 export class AssignmentsService {
@@ -36,5 +38,33 @@ export class AssignmentsService {
         });
 
         return model;
+    }
+
+    async exportToCsv(filePath: string): Promise<string> {
+        const entities = await this.repository.getAllAssignments();
+
+        const data = entities.map((entity) => ({
+            clientName: entity.clientName,
+            clientEmail: entity.clientEmail,
+            operatorName: entity.operatorName,
+        }));
+
+        try {
+            const json2csvParser = new Parser({ fields: ['clientName', 'clientEmail', 'operatorName'] });
+            const csvData = json2csvParser.parse(data);
+
+            fs.writeFileSync(filePath, csvData);
+
+            return 'CSV exportado com sucesso!';
+        } catch (error) {
+            throw new HttpException(
+                {
+                    message: 'Error exporting data to CSV.',
+                    status: false,
+                    status_code: 5001,
+                },
+                500,
+            );
+        }
     }
 }
