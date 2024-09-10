@@ -50,7 +50,14 @@ export class AssignmentsService {
         }));
 
         try {
-            const json2csvParser = new Parser({ fields: ['clientName', 'clientEmail', 'operatorName'] });
+            const json2csvParser = new Parser({
+                fields: [
+                    { label: 'Nome do Cliente', value: 'clientName' },
+                    { label: 'E-mail do Cliente', value: 'clientEmail' },
+                    { label: 'Nome do Operador', value: 'operatorName' },
+                ],
+            });
+
             const csvData = json2csvParser.parse(data);
 
             fs.writeFileSync(filePath, csvData);
@@ -59,7 +66,7 @@ export class AssignmentsService {
         } catch (error) {
             throw new HttpException(
                 {
-                    message: 'Error exporting data to CSV.',
+                    message: 'Erro ao exportar os dados para CSV.',
                     status: false,
                     status_code: 5001,
                 },
