@@ -1,11 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { OperatorsEntity } from '../entities/operators.entity';
-import { OperatorsDto } from '../dtos/operators.dto';
+import { OperatorsDataDto, OperatorsDto } from '../dtos/operators.dto';
 
 @Injectable()
 export class OperatorsRepository extends Repository<OperatorsEntity> {
-    constructor(private dataSource: DataSource) {
+    constructor(
+        private dataSource: DataSource,
+        private readonly entityManager: EntityManager,
+    ) {
         super(OperatorsEntity, dataSource.createEntityManager());
     }
 
@@ -72,14 +75,46 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
         return await this.findOne({ where: { id } });
     }
 
-    async deleteOperatorById(id: string): Promise<void> {
-        try {
-            const operator = await this.findOne({ where: { id } });
+    async updateOperatorById(id: string, body: OperatorsDataDto): Promise<OperatorsEntity> {
+        const operator = await this.entityManager.findOne(OperatorsEntity, { where: { id } });
 
-            if (!operator) {
+        if (!operator) {
+            throw new HttpException(
+                {
+                    context: 'updateOperatorById',
+                    message: 'Operator not found',
+                    status: false,
+                    status_code: 4000,
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        await this.entityManager
+            .createQueryBuilder()
+            .update(OperatorsEntity)
+            .set({
+                name: body.data.name,
+                updatedAt: new Date(),
+                updatedBy: 'system',
+            })
+            .where('id = :id', { id })
+            .execute();
+
+        return this.entityManager.findOne(OperatorsEntity, { where: { id } });
+    }
+
+    async deleteOperatorById(operatorId: string, entityManager: EntityManager): Promise<void | HttpException> {
+        try {
+            const product = await this.findOne({
+                where: { id: operatorId },
+            });
+
+            if (!product) {
                 throw new HttpException(
                     {
-                        message: 'Operator not found.',
+                        context: this.deleteOperatorById.name,
+                        message: 'Operator not found',
                         status: false,
                         status_code: 4000,
                     },
@@ -87,19 +122,19 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
                 );
             }
 
-            await this.manager.transaction(async (entityManager) => {
-                await entityManager
-                    .createQueryBuilder()
-                    .update(OperatorsEntity)
-                    .set({
-                        deletedAt: new Date(),
-                        deletedBy: 'system',
-                    })
-                    .where('id = :id', { id })
-                    .execute();
-            });
+            await entityManager
+                .createQueryBuilder()
+                .update(OperatorsEntity)
+                .set({ deletedAt: new Date(), deletedBy: 'system' })
+                .where('id = :id', { id: operatorId })
+                .execute();
 
-            console.log('Operator deleted successfully.');
+            console.log({
+                context: this.deleteOperatorById.name,
+                message: 'Produto cancelado com sucesso',
+                status: true,
+                status_code: 2000,
+            });
         } catch (error) {
             console.error(JSON.stringify({ context: this.deleteOperatorById.name, message: error.message }));
 
@@ -109,7 +144,7 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
                     status: false,
                     status_code: error.status_code || 4000,
                 },
-                error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+                error.status,
             );
         }
     }

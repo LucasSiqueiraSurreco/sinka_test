@@ -7,6 +7,7 @@ import {
     Delete,
     Param,
     Get,
+    Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { OperatorsService } from '../services/operators.service';
@@ -51,6 +52,15 @@ export class OperatorsController {
     })
     async operatorsMassRegister(@Body() body: { data: OperatorsDto[] }) {
         return this.service.operatorsMassRegister(body.data);
+    }
+
+    @ApiOperation({ operationId: 'updateOperatorById' })
+    @ApiOkResponse({
+        description: 'Operator updated successfully',
+    })
+    @Put(':id')
+    async updateOperatorById(@Param('id') id: string, @Body() body: OperatorsDataDto) {
+        return await this.service.updateOperatorById(id, body);
     }
 
     @ApiOperation({ operationId: 'deleteOperatorById' })

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OperatorsRepository } from '../repositories/operators.repository';
-import { OperatorsDto } from '../dtos/operators.dto';
+import { OperatorsDataDto, OperatorsDto } from '../dtos/operators.dto';
 import { OperatorsEntity } from '../entities/operators.entity';
 import { OperatorsItem, OperatorsItemModel } from '../models/operators.model';
 
@@ -43,7 +43,13 @@ export class OperatorsService {
         });
     }
 
-    async deleteOperatorById(id: string): Promise<void> {
-        return await this.repository.deleteOperatorById(id);
+    async updateOperatorById(id: string, body: OperatorsDataDto): Promise<OperatorsEntity> {
+        return await this.repository.updateOperatorById(id, body);
+    }
+
+    async deleteOperatorById(operatorId: string) {
+        await this.repository.manager.transaction(async (entityManager) => {
+            await this.repository.deleteOperatorById(operatorId, entityManager);
+        });
     }
 }
