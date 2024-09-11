@@ -18,9 +18,9 @@ export class OperatorsItem {
 }
 
 export class OperatorsItemModel {
-    @ApiProperty({ name: 'vouchers', type: OperatorsItem, isArray: true })
+    @ApiProperty({ name: 'operators', type: OperatorsItem, isArray: true })
     @Type(() => OperatorsItem)
-    @Expose({ name: 'vouchers' })
+    @Expose({ name: 'operators' })
     items: OperatorsItem[];
 
     @Exclude()
