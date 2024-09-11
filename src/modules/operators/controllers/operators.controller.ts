@@ -1,8 +1,18 @@
-import { ClassSerializerInterceptor, UseInterceptors, Controller, Body, Post, Delete, Param } from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    UseInterceptors,
+    Controller,
+    Body,
+    Post,
+    Delete,
+    Param,
+    Get,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { OperatorsService } from '../services/operators.service';
 import { HeadersBackofficeInterceptor } from '@common/interceptor/headers-interceptors';
 import { OperatorsDataDto, OperatorsDto } from '../dtos/operators.dto';
+import { OperatorsItemModel } from '../models/operators.model';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(HeadersBackofficeInterceptor)
@@ -15,6 +25,15 @@ import { OperatorsDataDto, OperatorsDto } from '../dtos/operators.dto';
 @ApiResponse({ status: 200 })
 export class OperatorsController {
     constructor(private readonly service: OperatorsService) {}
+
+    @ApiOperation({ operationId: 'findAllOperators' })
+    @ApiOkResponse({
+        description: 'List of all operators',
+    })
+    @Get()
+    async findAllOperators(): Promise<OperatorsItemModel> {
+        return await this.service.findAllOperators();
+    }
 
     @ApiOperation({ operationId: 'operatorRegister' })
     @ApiOkResponse({

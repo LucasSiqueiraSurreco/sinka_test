@@ -7,6 +7,11 @@ export class OperatorsItem {
     @Type(() => String)
     name: string;
 
+    @ApiProperty({ name: 'id', type: String })
+    @Expose({ name: 'id' })
+    @Type(() => String)
+    id: string;
+
     constructor(partial: Partial<OperatorsItem>) {
         Object.assign(this, partial);
     }

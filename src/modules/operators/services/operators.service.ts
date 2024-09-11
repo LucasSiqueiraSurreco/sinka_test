@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OperatorsRepository } from '../repositories/operators.repository';
 import { OperatorsDto } from '../dtos/operators.dto';
+import { OperatorsEntity } from '../entities/operators.entity';
+import { OperatorsItem, OperatorsItemModel } from '../models/operators.model';
 
 @Injectable()
 export class OperatorsService {
@@ -9,6 +11,25 @@ export class OperatorsService {
         @InjectRepository(OperatorsRepository)
         private readonly repository: OperatorsRepository,
     ) {}
+
+    async findAllOperators(): Promise<OperatorsItemModel> {
+        const entities = await this.repository.findAllOperators();
+
+        const items = entities.map(
+            (entity: OperatorsEntity) =>
+                new OperatorsItem({
+                    id: entity.id,
+                    name: entity.name,
+                }),
+        );
+
+        const model = new OperatorsItemModel({
+            items,
+            meta: { total: items.length },
+        });
+
+        return model;
+    }
 
     async operatorRegister(body: OperatorsDto) {
         return this.repository.manager.transaction(async (entityManager) => {
