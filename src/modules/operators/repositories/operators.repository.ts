@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { OperatorsEntity } from '../entities/operators.entity';
 import { OperatorsDto } from '../dtos/operators.dto';
@@ -73,10 +73,44 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
     }
 
     async deleteOperatorById(id: string): Promise<void> {
-        const operator = await this.findOne({ where: { id } });
-        if (!operator) {
-            throw new Error('Operator not found');
+        try {
+            const operator = await this.findOne({ where: { id } });
+
+            if (!operator) {
+                throw new HttpException(
+                    {
+                        message: 'Operator not found.',
+                        status: false,
+                        status_code: 4000,
+                    },
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+
+            await this.manager.transaction(async (entityManager) => {
+                await entityManager
+                    .createQueryBuilder()
+                    .update(OperatorsEntity)
+                    .set({
+                        deletedAt: new Date(),
+                        deletedBy: 'system',
+                    })
+                    .where('id = :id', { id })
+                    .execute();
+            });
+
+            console.log('Operator deleted successfully.');
+        } catch (error) {
+            console.error(JSON.stringify({ context: this.deleteOperatorById.name, message: error.message }));
+
+            throw new HttpException(
+                {
+                    message: error.message,
+                    status: false,
+                    status_code: error.status_code || 4000,
+                },
+                error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-        await this.remove(operator);
     }
 }

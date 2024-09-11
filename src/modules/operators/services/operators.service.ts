@@ -32,18 +32,18 @@ export class OperatorsService {
     }
 
     async operatorRegister(body: OperatorsDto) {
-        return this.repository.manager.transaction(async (entityManager) => {
+        return await this.repository.manager.transaction(async (entityManager) => {
             return await this.repository.operatorRegister(body, entityManager);
         });
     }
 
     async operatorsMassRegister(bodies: OperatorsDto[]) {
-        return this.repository.manager.transaction(async (entityManager) => {
+        return await this.repository.manager.transaction(async (entityManager) => {
             return await this.repository.operatorsMassRegister(bodies, entityManager);
         });
     }
 
     async deleteOperatorById(id: string): Promise<void> {
-        await this.repository.deleteOperatorById(id);
+        return await this.repository.deleteOperatorById(id);
     }
 }
