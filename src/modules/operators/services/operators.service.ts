@@ -21,4 +21,8 @@ export class OperatorsService {
             return await this.repository.operatorsMassRegister(bodies, entityManager);
         });
     }
+
+    async deleteOperatorById(id: string): Promise<void> {
+        await this.repository.deleteOperatorById(id);
+    }
 }

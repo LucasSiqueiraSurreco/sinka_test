@@ -72,7 +72,7 @@ export class OperatorsRepository extends Repository<OperatorsEntity> {
         return await this.findOne({ where: { id } });
     }
 
-    async deleteOperator(id: string): Promise<void> {
+    async deleteOperatorById(id: string): Promise<void> {
         const operator = await this.findOne({ where: { id } });
         if (!operator) {
             throw new Error('Operator not found');

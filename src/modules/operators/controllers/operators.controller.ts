@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, UseInterceptors, Controller, Body, Post } from '@nestjs/common';
+import { ClassSerializerInterceptor, UseInterceptors, Controller, Body, Post, Delete, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { OperatorsService } from '../services/operators.service';
 import { HeadersBackofficeInterceptor } from '@common/interceptor/headers-interceptors';
@@ -32,5 +32,14 @@ export class OperatorsController {
     })
     async operatorsMassRegister(@Body() body: { data: OperatorsDto[] }) {
         return this.service.operatorsMassRegister(body.data);
+    }
+
+    @ApiOperation({ operationId: 'deleteOperatorById' })
+    @ApiOkResponse({
+        description: 'Operator deleted successfully',
+    })
+    @Delete(':id')
+    async deleteOperatorById(@Param('id') id: string): Promise<void> {
+        await this.service.deleteOperatorById(id);
     }
 }
