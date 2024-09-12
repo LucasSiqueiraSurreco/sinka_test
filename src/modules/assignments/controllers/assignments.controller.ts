@@ -1,4 +1,13 @@
-import { ClassSerializerInterceptor, UseInterceptors, Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    UseInterceptors,
+    Controller,
+    Get,
+    HttpStatus,
+    Res,
+    Delete,
+    Param,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { HeadersBackofficeInterceptor } from '@common/interceptor/headers-interceptors';
 import { AssignmentsService } from '../services/assignments.service';
@@ -41,5 +50,12 @@ export class AssignmentsController {
         } else {
             reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Erro ao enviar o arquivo CSV.');
         }
+    }
+
+    @ApiOperation({ operationId: 'removeAssignment' })
+    @ApiResponse({ status: 200, description: 'Assignment Removed' })
+    @Delete(':id')
+    async removeAssignment(@Param('id') id: string): Promise<void> {
+        await this.service.removeAssignment(id);
     }
 }

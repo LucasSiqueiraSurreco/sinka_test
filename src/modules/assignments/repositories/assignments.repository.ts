@@ -77,4 +77,35 @@ export class AssignmentsRepository extends Repository<AssignmentsEntity> {
             );
         }
     }
+
+    async removeAssignment(id: string, entityManager: EntityManager) {
+        try {
+            const assignment = await this.findOne({ where: { id } });
+
+            if (!assignment) {
+                throw new HttpException(
+                    {
+                        message: 'Assignment not found.',
+                        status: false,
+                        status_code: 404,
+                    },
+                    404,
+                );
+            }
+
+            assignment.deletedAt = new Date();
+            assignment.deletedBy = 'system';
+
+            return await entityManager.save(AssignmentsEntity, assignment);
+        } catch (error) {
+            throw new HttpException(
+                {
+                    message: 'Error when trying to delete assignment.',
+                    status: false,
+                    status_code: error.status_code || 5000,
+                },
+                error.status || 500,
+            );
+        }
+    }
 }

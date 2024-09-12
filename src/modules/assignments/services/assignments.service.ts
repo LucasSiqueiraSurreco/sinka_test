@@ -74,4 +74,10 @@ export class AssignmentsService {
             );
         }
     }
+
+    async removeAssignment(id: string) {
+        return this.repository.manager.transaction(async (entityManager) => {
+            return await this.repository.removeAssignment(id, entityManager);
+        });
+    }
 }
