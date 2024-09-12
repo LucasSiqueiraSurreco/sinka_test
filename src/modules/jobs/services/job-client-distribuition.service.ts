@@ -16,7 +16,7 @@ export class JobClientDistribuitionService {
         private readonly assignmentsRepository: AssignmentsRepository,
     ) {}
 
-    //@Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_30_SECONDS)
     async handleJobProcessing() {
         this.logger.log('Starting job processing...');
 
