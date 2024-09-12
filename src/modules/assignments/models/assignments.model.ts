@@ -2,6 +2,11 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AssignmentsItem {
+    @ApiProperty({ name: 'id', type: String })
+    @Expose({ name: 'id' })
+    @Type(() => String)
+    id: string;
+
     @ApiProperty({ name: 'operator_id', type: String })
     @Expose({ name: 'operator_id' })
     @Type(() => String)

@@ -24,6 +24,7 @@ export class AssignmentsService {
         const items = entities.map(
             (entity) =>
                 new AssignmentsItem({
+                    id: entity.id,
                     clientId: entity.clientId,
                     clientName: entity.clientName,
                     clientEmail: entity.clientEmail,
