@@ -5,12 +5,15 @@ import { AssignmentsRepository } from '../repositories/assignments.repository';
 import { AssignmentsItem, AssignmentsModel } from '../models/assignments.model';
 import * as fs from 'fs';
 import { Parser } from 'json2csv';
+import { ClientsService } from '@modules/clients/services/clients.service';
+import { StatusJobsAssignmentEnum } from '@common/enums/status-job.enum';
 
 @Injectable()
 export class AssignmentsService {
     constructor(
         @InjectRepository(AssignmentsRepository)
         private readonly repository: AssignmentsRepository,
+        private readonly clientsService: ClientsService,
     ) {}
 
     async assignmentRegister(body: AssignmentsDto) {
@@ -78,7 +81,18 @@ export class AssignmentsService {
 
     async removeAssignment(id: string) {
         return this.repository.manager.transaction(async (entityManager) => {
-            return await this.repository.removeAssignment(id, entityManager);
+            const assignment = await this.repository.removeAssignment(id, entityManager);
+
+            const assignmentEntity = await this.repository.findOne({ where: { id } });
+            if (assignmentEntity && assignmentEntity.clientId) {
+                await this.clientsService.updateClientStatus(
+                    assignmentEntity.clientId,
+                    StatusJobsAssignmentEnum.PENDING,
+                    entityManager,
+                );
+            }
+
+            return assignment;
         });
     }
 }
